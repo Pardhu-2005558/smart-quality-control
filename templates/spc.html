@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SPC Analysis - Smart Quality Control</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>Smart Quality Control</h1>
+        <p>Manufacturing Quality Analysis System</p>
+    </header>
+
+    <main class="container">
+
+        <h2>Statistical Process Control</h2>
+
+        <p>
+            Monitor manufacturing process variation
+            using Individuals and Moving Range control charts.
+        </p>
+
+        <a href="/">← Back to Dashboard</a>
+
+        {% if error %}
+
+        <section class="upload-section">
+            <h3>Unable to perform SPC analysis</h3>
+            <p>{{ error }}</p>
+        </section>
+
+        {% elif summary %}
+
+        <section class="table-section">
+
+            <h3>Process Overview</h3>
+
+            <div class="spc-grid">
+
+                <div class="spc-card">
+                    <h3>Total Measurements</h3>
+                    <h2>{{ summary.total_measurements }}</h2>
+                </div>
+
+                <div class="spc-card">
+                    <h3>Process Mean</h3>
+                    <h2>{{ summary.process_mean }} cm</h2>
+                </div>
+
+                <div class="spc-card">
+                    <h3>In Control</h3>
+                    <h2>{{ summary.in_control_count }}</h2>
+                </div>
+
+                <div class="spc-card">
+                    <h3>Out of Control</h3>
+                    <h2>{{ summary.out_of_control_count }}</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="table-section">
+
+            <h3>Individuals Control Chart</h3>
+
+            <p>
+                Displays individual product measurements
+                with upper, center and lower control limits.
+            </p>
+
+            <div id="individualChart"></div>
+
+        </section>
+
+        <section class="table-section">
+
+            <h3>Moving Range Control Chart</h3>
+
+            <p>
+                Displays the variation between consecutive
+                product measurements.
+            </p>
+
+            <div id="movingRangeChart"></div>
+
+        </section>
+
+        <section class="table-section">
+
+
+            <section class="table-section">
+
+                <h3>Control and Specification Limits</h3>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Upper Control Limit (UCL)</td>
+                            <td>{{ summary.ucl }} cm</td>
+                            <td>Statistical process boundary</td>
+                        </tr>
+
+                        <tr>
+                            <td>Center Line (CL)</td>
+                            <td>{{ summary.cl }} cm</td>
+                            <td>Process average</td>
+                        </tr>
+
+                        <tr>
+                            <td>Lower Control Limit (LCL)</td>
+                            <td>{{ summary.lcl }} cm</td>
+                            <td>Statistical process boundary</td>
+                        </tr>
+
+                        <tr>
+                            <td>Upper Specification Limit (USL)</td>
+                            <td>{{ summary.usl }} cm</td>
+                            <td>Maximum acceptable dimension</td>
+                        </tr>
+
+                        <tr>
+                            <td>Lower Specification Limit (LSL)</td>
+                            <td>{{ summary.lsl }} cm</td>
+                            <td>Minimum acceptable dimension</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+            <section class="table-section">
+
+                <h3>Specification Analysis</h3>
+
+
+                <section class="table-section">
+
+                    <h3>Process Capability Analysis</h3>
+
+                    <p>
+                        Cp measures the potential capability of the process,
+                        while Cpk measures capability considering the process
+                        average and its distance from specification limits.
+                    </p>
+
+                    <div class="spc-grid">
+
+                        <div class="spc-card">
+                            <h3>Process Capability (Cp)</h3>
+
+                            <h2>
+                                {% if summary.cp is not none %}
+                                {{ summary.cp }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </h2>
+
+                            <p>Potential process capability</p>
+                        </div>
+
+                        <div class="spc-card">
+                            <h3>Process Capability (Cpk)</h3>
+
+                            <h2>
+                                {% if summary.cpk is not none %}
+                                {{ summary.cpk }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </h2>
+
+                            <p>Actual process capability</p>
+                        </div>
+
+                    </div>
+
+                    <h3>Capability Status</h3>
+
+                    <h2>{{ summary.capability_status }}</h2>
+
+                    <p>
+                        A Cpk value of 1.33 or above is commonly used
+                        as a process capability benchmark.
+                    </p>
+
+                </section>
+
+
+                <div class="spc-grid">
+
+                    <div class="spc-card">
+                        <h3>Within Specification</h3>
+                        <h2>{{ summary.within_specification_count }}</h2>
+                    </div>
+
+                    <div class="spc-card">
+                        <h3>Out of Specification</h3>
+                        <h2>{{ summary.out_of_specification_count }}</h2>
+                    </div>
+
+                </div>
+
+                <p>
+                    Products outside USL or LSL do not meet the specified
+                    dimensional requirements.
+                </p>
+
+            </section>
+
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Upper Control Limit (UCL)</td>
+                        <td>{{ summary.ucl }} cm</td>
+                    </tr>
+
+                    <tr>
+                        <td>Center Line (CL)</td>
+                        <td>{{ summary.cl }} cm</td>
+                    </tr>
+
+                    <tr>
+                        <td>Lower Control Limit (LCL)</td>
+                        <td>{{ summary.lcl }} cm</td>
+                    </tr>
+
+                    <tr>
+                        <td>Moving Range UCL</td>
+                        <td>{{ summary.mr_ucl }} cm</td>
+                    </tr>
+
+                    <tr>
+                        <td>Average Moving Range</td>
+                        <td>{{ summary.mr_cl }} cm</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <section class="upload-section">
+
+            <h3>Process Interpretation</h3>
+
+            {% if summary.out_of_control_count > 0 %}
+
+            <p>
+                Some measurements are outside the calculated
+                control limits. Investigate possible special
+                causes of process variation.
+            </p>
+
+            {% else %}
+
+            <p>
+                No individual measurements are outside the
+                calculated control limits. Continue monitoring
+                the process for other patterns or trends.
+            </p>
+
+            {% endif %}
+
+            <p>
+                These results use statistical control limits.
+                They do not establish whether products meet
+                specification requirements.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+    <script>
+
+        const individualData = {{ individuals_chart | safe }};
+        const movingRangeData = {{ moving_range_chart | safe }};
+
+        if (individualData.data) {
+
+            Plotly.newPlot(
+                "individualChart",
+                individualData.data,
+                individualData.layout,
+                { responsive: true }
+            );
+
+        }
+
+        if (movingRangeData.data) {
+
+            Plotly.newPlot(
+                "movingRangeChart",
+                movingRangeData.data,
+                movingRangeData.layout,
+                { responsive: true }
+            );
+
+        }
+
+    </script>
+
+</body>
+
+</html>

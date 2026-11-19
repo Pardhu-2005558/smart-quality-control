@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fishbone Analysis - Smart Quality Control</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Smart Quality Control</h1>
+        <p>Manufacturing Quality Analysis System</p>
+    </header>
+
+    <main class="container">
+
+        <h2>Fishbone Analysis</h2>
+
+        <p>
+            Analyze possible root causes of manufacturing defects
+            using the Ishikawa diagram.
+        </p>
+
+        <a href="/">← Back to Dashboard</a>
+
+        <section class="upload-section">
+
+            <form action="/fishbone" method="GET">
+
+                <label for="defect_type">
+                    Select Defect Type
+                </label>
+
+                <select name="defect_type" id="defect_type" onchange="this.form.submit()">
+
+                    {% for defect in defect_types %}
+
+                    <option value="{{ defect }}" {% if defect==selected_defect %}selected{% endif %}>
+                        {{ defect }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </form>
+
+            {% if selected_defect %}
+
+            <h3>Selected Defect: {{ selected_defect }}</h3>
+
+            <p>
+                Total occurrences in uploaded dataset:
+                <strong>{{ defect_count }}</strong>
+            </p>
+
+            {% else %}
+
+            <h3>No defective records available.</h3>
+
+            {% endif %}
+
+        </section>
+
+        {% if selected_defect %}
+
+        <section class="table-section">
+
+            <h3>Possible Root Causes</h3>
+
+            <p>
+                The following causes are suggestions for investigation,
+                not confirmed causes from factory observations.
+            </p>
+
+            <div class="fishbone-grid">
+
+                {% for category, items in causes.items() %}
+
+                <div class="fishbone-card">
+
+                    <h3>{{ category }}</h3>
+
+                    <ul>
+                        {% for item in items %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

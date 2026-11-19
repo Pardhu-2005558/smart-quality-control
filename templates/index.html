@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Quality Control System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="main-header">
+
+        <div class="header-content">
+
+            <div>
+                <h1>Smart Quality Control</h1>
+                <p>Manufacturing Quality Analysis System</p>
+            </div>
+
+            <div class="header-tag">
+                TOTAL QUALITY MANAGEMENT
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="main-container">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+        <section class="flash-container">
+
+            {% for category, message in messages %}
+
+            <div class="alert {{ category }}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+        {% endwith %}
+
+
+        <section class="upload-section">
+
+            <div class="section-heading">
+                <h2>Dataset Information</h2>
+                <p>Your manufacturing inspection dataset is loaded automatically.</p>
+            </div>
+
+            <div class="dataset-info">
+
+                <div class="dataset-icon">
+                    📊
+                </div>
+
+                <div class="dataset-details">
+
+                    <h3>{{ dataset_name }}</h3>
+
+                    <p>Manufacturing Inspection Dataset</p>
+
+                    <span>
+                        {{ total_rows }} records loaded successfully
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Quality Overview -->
+        <section class="welcome">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Quality Overview</h2>
+
+                    <p>
+                        Monitor manufacturing performance and
+                        product quality through analytical tools.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- Navigation -->
+            <div class="navigation-links">
+
+                <a href="/pareto" class="nav-link">
+                    <span>📊</span>
+                    Pareto Analysis
+                </a>
+
+                <a href="/fishbone" class="nav-link">
+                    <span>🐟</span>
+                    Fishbone Analysis
+                </a>
+
+                <a href="/spc" class="nav-link">
+                    <span>📈</span>
+                    Statistical Process Control
+                </a>
+
+                <a href="{{ url_for('machine_analysis') }}" class="nav-link">
+
+                    <span>⚙️</span>
+                    Machine-wise Analysis
+
+                </a>
+
+                <a href="/recommendations" class="nav-link">
+                    <span>💡</span>
+                    Quality Improvement
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- Dashboard Metrics -->
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Manufacturing Quality Metrics</h2>
+
+                    <p>
+                        Summary of the uploaded inspection dataset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard">
+
+                <!-- Total Products -->
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon total-icon">📦</div>
+                        <span class="metric-label">TOTAL</span>
+                    </div>
+
+                    <h3>Total Products</h3>
+
+                    <h1>{{ metrics.total_products }}</h1>
+
+                    <p>Products inspected</p>
+
+                </div>
+
+
+                <!-- Good Products -->
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon good-icon">✓</div>
+                        <span class="metric-label">ACCEPTED</span>
+                    </div>
+
+                    <h3>Good Products</h3>
+
+                    <h1>{{ metrics.good_products }}</h1>
+
+                    <p>Accepted products</p>
+
+                </div>
+
+
+                <!-- Defective Products -->
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon defective-icon">✕</div>
+                        <span class="metric-label">REJECTED</span>
+                    </div>
+
+                    <h3>Defective Products</h3>
+
+                    <h1>{{ metrics.defective_products }}</h1>
+
+                    <p>Rejected products</p>
+
+                </div>
+
+
+                <!-- Defect Rate -->
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon defect-rate-icon">📉</div>
+                        <span class="metric-label">QUALITY</span>
+                    </div>
+
+                    <h3>Defect Rate</h3>
+
+                    <h1>{{ metrics.defect_rate }}%</h1>
+
+                    <p>Product defect percentage</p>
+
+                </div>
+
+
+                <!-- Acceptance Rate -->
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon acceptance-icon">📈</div>
+                        <span class="metric-label">QUALITY</span>
+                    </div>
+
+                    <h3>Acceptance Rate</h3>
+
+                    <h1>{{ metrics.acceptance_rate }}%</h1>
+
+                    <p>Product acceptance percentage</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Dataset Preview -->
+        <section class="table-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Dataset Preview</h2>
+
+                    <p>
+                        Showing first {{ preview|length }} of
+                        {{ total_rows }} records.
+                    </p>
+                </div>
+
+                <div class="record-count">
+                    {{ total_rows }} Records
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            {% for column in columns %}
+
+                            <th>{{ column }}</th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in preview %}
+
+                        <tr>
+
+                            {% for column in columns %}
+
+                            <td>{{ row[column] }}</td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Quality Management -->
+        <section class="info-section">
+
+            <div class="info-icon">
+                🎯
+            </div>
+
+            <div>
+
+                <h2>Quality Management</h2>
+
+                <p>
+                    This system applies Total Quality Management
+                    principles to analyze manufacturing defects,
+                    monitor production quality and support
+                    continuous improvement.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer>
+
+            <p>
+                Smart Quality Control System
+                <span>|</span>
+                Total Quality Management Project
+            </p>
+
+        </footer>
+
+    </main>
+
+</body>
+
+</html>

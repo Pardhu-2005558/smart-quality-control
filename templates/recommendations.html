@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quality Improvement Recommendations</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .recommendation-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .priority {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .high {
+            background: #ffe0e0;
+            color: #b00020;
+        }
+
+        .medium {
+            background: #fff0cc;
+            color: #946200;
+        }
+
+        .low {
+            background: #dff5e1;
+            color: #176b2c;
+        }
+
+        .recommendation-card h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Smart Quality Control</h1>
+
+        <h2>Quality Improvement Recommendations</h2>
+
+        <p>
+            Analyze manufacturing quality results and identify
+            areas where improvements may be required.
+        </p>
+
+        <a href="/">
+            ← Back to Dashboard
+        </a>
+
+        <hr>
+
+        <h2>Generated Recommendations</h2>
+
+        {% for item in recommendations %}
+
+        <div class="recommendation-card">
+
+            <h3>{{ item.category }}</h3>
+
+            <p>
+                <strong>Finding:</strong>
+                {{ item.finding }}
+            </p>
+
+            <p>
+                <strong>Suggested Improvement:</strong>
+                {{ item.recommendation }}
+            </p>
+
+            <p>
+                <strong>Priority:</strong>
+
+                <span class="priority {{ item.priority|lower }}">
+                    {{ item.priority }}
+                </span>
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+        <hr>
+
+        <h2>Quality Improvement Objective</h2>
+
+        <p>
+            The objective of these recommendations is to reduce
+            manufacturing defects, improve machine performance,
+            maintain dimensional quality and increase the overall
+            acceptance rate.
+        </p>
+
+        <p>
+            Recommendations are generated from the uploaded
+            inspection data. Suggested causes and actions should
+            be verified through actual manufacturing investigation.
+        </p>
+
+    </div>
+
+</body>
+
+</html>

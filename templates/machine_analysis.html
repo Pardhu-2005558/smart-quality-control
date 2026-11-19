@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Machine-wise Quality Analysis</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Smart Quality Control</h1>
+
+        <h2>Machine-wise Quality Analysis</h2>
+
+        <p>
+            Compare manufacturing machines based on their
+            product quality and defect rates.
+        </p>
+
+        <a href="/">
+            ← Back to Dashboard
+        </a>
+
+        <hr>
+
+        <h2>Machine Overview</h2>
+
+        <div class="spc-grid">
+
+            <div class="spc-card">
+                <h3>Total Machines</h3>
+                <h2>{{ summary.total_machines }}</h2>
+            </div>
+
+            <div class="spc-card">
+                <h3>Best Performing Machine</h3>
+                <h2>{{ summary.best_machine }}</h2>
+                <p>{{ summary.best_defect_rate }}% defect rate</p>
+            </div>
+
+            <div class="spc-card">
+                <h3>Highest Defect Rate</h3>
+                <h2>{{ summary.worst_machine }}</h2>
+                <p>{{ summary.worst_defect_rate }}% defect rate</p>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h2>Machine-wise Defective Products</h2>
+
+        <div>
+            {{ defect_chart | safe }}
+        </div>
+
+        <hr>
+
+        <h2>Machine-wise Defect Rate</h2>
+
+        <div>
+            {{ rate_chart | safe }}
+        </div>
+
+        <hr>
+
+        <h2>Detailed Machine Comparison</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Machine</th>
+                    <th>Total Products</th>
+                    <th>Good Products</th>
+                    <th>Defective Products</th>
+                    <th>Defect Rate (%)</th>
+                    <th>Acceptance Rate (%)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for machine in machine_data %}
+
+                <tr>
+                    <td>{{ machine.machine_id }}</td>
+                    <td>{{ machine.total_products }}</td>
+                    <td>{{ machine.good_products }}</td>
+                    <td>{{ machine.defective_products }}</td>
+                    <td>{{ machine.defect_rate }}</td>
+                    <td>{{ machine.acceptance_rate }}</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        <hr>
+
+        <h2>Machine Quality Interpretation</h2>
+
+        <p>
+            Machine {{ summary.best_machine }} has the lowest
+            defect rate and is currently the best-performing
+            machine based on this dataset.
+        </p>
+
+        <p>
+            Machine {{ summary.worst_machine }} has the highest
+            defect rate and should be investigated to identify
+            possible causes of manufacturing defects.
+        </p>
+
+    </div>
+
+</body>
+
+</html>

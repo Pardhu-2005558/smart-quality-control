@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pareto Analysis - Smart Quality Control</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Smart Quality Control</h1>
+        <p>Manufacturing Quality Analysis System</p>
+    </header>
+
+    <main class="container">
+
+        <h2>Pareto Analysis</h2>
+
+        <p>
+            Identify the most frequent manufacturing defects
+            using the Pareto principle.
+        </p>
+
+        <a href="/">← Back to Dashboard</a>
+
+        {% if total_defects == 0 %}
+
+        <h3>No defective products available for analysis.</h3>
+
+        {% else %}
+
+        <section class="upload-section">
+
+            <h3>Total Defects: {{ total_defects }}</h3>
+
+            <h3>
+                Highest Defect:
+                {{ highest_defect }}
+            </h3>
+
+            <h3>
+                Contribution:
+                {{ highest_percentage }}%
+            </h3>
+
+        </section>
+
+        <section class="table-section">
+
+            <h3>Defect Distribution</h3>
+
+            <div id="paretoChart"></div>
+
+        </section>
+
+        <section class="table-section">
+
+            <h3>Pareto Analysis Table</h3>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Defect Type</th>
+                            <th>Frequency</th>
+                            <th>Percentage</th>
+                            <th>Cumulative Percentage</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for row in pareto_data %}
+
+                        <tr>
+                            <td>{{ row.defect_type }}</td>
+                            <td>{{ row.frequency }}</td>
+                            <td>{{ row.percentage }}%</td>
+                            <td>{{ row.cumulative_percentage }}%</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+    <script>
+
+        const chartData = {{ chart_json | safe }};
+
+        if (chartData.data) {
+
+            Plotly.newPlot(
+                "paretoChart",
+                chartData.data,
+                chartData.layout,
+                { responsive: true }
+            );
+
+        }
+
+    </script>
+
+</body>
+
+</html>
